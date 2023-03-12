@@ -184,8 +184,9 @@ def pregunta_10():
     ndf["_c0"]=ndf.index
     ndf["_c1"]=pd.DataFrame(t_n,index=["_c0"]).T["_c0"]
     ndf=ndf.reset_index(drop=True)
-    return ndf.rename(columns={"_c1":"_c2", "_c0":"_c1"}) 
+    return ndf.rename(columns={"_c1":"_c2", "_c0":"_c1"}).set_index("_c1") 
 
+print(pregunta_10().head(n=5))
 
 def pregunta_11():
     """
@@ -210,8 +211,7 @@ def pregunta_11():
     ndf=ndf[["_c0","_c4"]]
     return ndf
 
-print(pregunta_11().head(n=5))
-print(pregunta_11().tail(n=5))
+
 
 def pregunta_12():
     """
