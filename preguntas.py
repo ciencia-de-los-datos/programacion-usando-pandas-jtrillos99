@@ -186,7 +186,6 @@ def pregunta_10():
     ndf=ndf.reset_index(drop=True)
     return ndf.rename(columns={"_c1":"_c2", "_c0":"_c1"}).set_index("_c1") 
 
-print(pregunta_10().head(n=5))
 
 def pregunta_11():
     """

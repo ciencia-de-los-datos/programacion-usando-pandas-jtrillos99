@@ -207,6 +207,7 @@ test = {
     "11": test_11,
     "12": test_12,
     "13": test_13,
-}[sys.argv[0]]
+}[sys.argv[1]]
 
 test()
+
