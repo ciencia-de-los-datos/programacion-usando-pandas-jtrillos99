@@ -184,8 +184,8 @@ def pregunta_10():
     ndf["_c0"]=ndf.index
     ndf["_c1"]=pd.DataFrame(t_n,index=["_c0"]).T["_c0"]
     ndf=ndf.reset_index(drop=True)
-    return ndf 
-  
+    return ndf.rename(columns={"_c1":"_c2", "_c0":"_c1"}) 
+
 
 def pregunta_11():
     """
@@ -203,12 +203,15 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    ndf=tbl1.groupby('_c0').agg({'_c4': lambda x: ','.join(x)})
+    tbl0_n=tbl1.sort_values(by=['_c0','_c4'])
+    ndf=tbl0_n.groupby('_c0').agg({'_c4': lambda x: ','.join(x)})
     ndf["_c0"]=ndf.index
     ndf=ndf.reset_index(drop=True)
     ndf=ndf[["_c0","_c4"]]
     return ndf
 
+print(pregunta_11().head(n=5))
+print(pregunta_11().tail(n=5))
 
 def pregunta_12():
     """
