@@ -13,8 +13,10 @@ tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
 tbl1 = pd.read_csv("tbl1.tsv", sep="\t")
 tbl2 = pd.read_csv("tbl2.tsv", sep="\t")
 
-
 def pregunta_01():
+
+
+
     """
     ¿Cuál es la cantidad de filas en la tabla `tbl0.tsv`?
 
@@ -22,7 +24,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.index.size
 
 
 def pregunta_02():
@@ -33,7 +35,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return tbl0.columns.size
 
 
 def pregunta_03():
@@ -50,7 +52,8 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    return tbl0.groupby('_c1').size()
+
 
 
 def pregunta_04():
@@ -65,7 +68,8 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    return tbl0.groupby('_c1').mean()['_c2']
+
 
 
 def pregunta_05():
@@ -82,8 +86,7 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
-
+    return tbl0.groupby('_c1').max()['_c2']
 
 def pregunta_06():
     """
@@ -94,8 +97,11 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
-
+    L=sorted(tbl1['_c4'].unique().tolist())
+    L2=[]
+    [L2.append(i.upper()) for i in L]      
+    return L2
+    
 
 def pregunta_07():
     """
@@ -110,7 +116,7 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby('_c1').sum()['_c2']
 
 
 def pregunta_08():
@@ -128,8 +134,7 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
-
+    return tbl0.assign(suma=tbl0['_c0']+tbl0['_c2'])
 
 def pregunta_09():
     """
@@ -146,7 +151,7 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    return tbl0.assign(year=tbl0['_c3'].str.split('-').str[0])
 
 
 def pregunta_10():
@@ -163,8 +168,24 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    c1=sorted(tbl0["_c1"].unique().tolist())
+    t_n={}
+    for i in c1:
+        t_n[i]=[]
 
+    for i in range(len(tbl0)):
+        t_n[tbl0.iloc[i]["_c1"]].append(tbl0.iloc[i]["_c2"])
+    
+    for i in c1:
+        t_n[i]=sorted(t_n[i])
+        t_n[i]=":".join(map(str,t_n[i]))
+    
+    ndf=pd.DataFrame(t_n,index=["_c0"]).T
+    ndf["_c0"]=ndf.index
+    ndf["_c1"]=pd.DataFrame(t_n,index=["_c0"]).T["_c0"]
+    ndf=ndf.reset_index(drop=True)
+    return ndf 
+  
 
 def pregunta_11():
     """
@@ -182,7 +203,11 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    ndf=tbl1.groupby('_c0').agg({'_c4': lambda x: ','.join(x)})
+    ndf["_c0"]=ndf.index
+    ndf=ndf.reset_index(drop=True)
+    ndf=ndf[["_c0","_c4"]]
+    return ndf
 
 
 def pregunta_12():
@@ -200,8 +225,15 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
-
+    ndf= tbl2.sort_values(by=['_c5a'])
+    ndf["_c5"]=ndf["_c5a"] + ':' + ndf["_c5b"].astype("str")
+    ndf=ndf[["_c0","_c5"]]
+    ndf_2=ndf.groupby('_c0').agg({'_c5': lambda x: ','.join(x)})
+    ndf_2["_c0"]=ndf_2.index
+    ndf=ndf_2.reset_index(drop=True)
+    ndf=ndf[["_c0","_c5"]]
+    
+    return ndf 
 
 def pregunta_13():
     """
@@ -217,4 +249,7 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    ndf = tbl0.merge(tbl2, on='_c0')
+    return ndf.groupby('_c1')['_c5b'].sum()
+
+
